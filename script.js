@@ -165,8 +165,7 @@ function displayQuestion() {
         "</svg>" +
         "</span>" +
         "</button>",
-    )
-    .join("")
+    ).join("")
 
   Array.from(document.querySelectorAll(".option-btn")).map((btn) => {
     btn.addEventListener("click", () => {
@@ -333,12 +332,23 @@ function showResults() {
 
 function saveToLeaderboard() {
   let leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard") || "[]")
+  
+  const existingEntry = leaderboard.find((entry) => entry.name === state.playerName)
+  
+  if (existingEntry) {
+    if (state.score > existingEntry.score) {
+      existingEntry.score = state.score
+      existingEntry.date = new Date().toISOString()
+    }
+  } else {
+    leaderboard.push({
+      name: state.playerName,
+      score: state.score,
+      date: new Date().toISOString(),
+    })
+  }
 
-  leaderboard.push({
-    name: state.playerName,
-    score: state.score,
-    date: new Date().toISOString(),
-  })
+
 
   leaderboard.sort((a, b) => b.score - a.score)
   leaderboard = leaderboard.slice(0, 3)
@@ -401,13 +411,9 @@ function decodeHTML(html) {
   txt.innerHTML = html
   return txt.value
 }
-
 function escapeHTML(str) {
   const div = document.createElement("div")
   div.textContent = str
   return div.innerHTML
 }
-
 init()
-
-
